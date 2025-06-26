@@ -1,2 +1,2 @@
-const api = "https://poultry-expense-tracker-pout.vercel.app/api";
+const api = "https://poultry-expense-tracker-pout.vercel.app";
 export default api;
