@@ -32,7 +32,13 @@ app.use(cors());
 //   console.log('Response Headers:', res.getHeaders());
 //   next();
 // });
-app.use(cors({ origin: ['http://localhost:3000','https://poultry-expense-tracker-q5h2.vercel.app'] }));
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://poultry-expense-tracker-q5h2.vercel.app',
+    'https://poultry-expense-tracker-pout.vercel.app' // ✅ Add this
+  ]
+}));
 app.use(express.json());
 
 // Routes
