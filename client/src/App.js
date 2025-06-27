@@ -165,18 +165,23 @@ const fetchExpenses = async (seasonId) => {
 
 
   const handleSignup = async (userData) => {
-    try {
-      const response = await axios.post(`${api}/auth/signup`, userData)
-      localStorage.setItem("token", response.data.token)
-      setIsAuthenticated(true)
-      setCurrentPage("dashboard")
-      await fetchSeason()
-      await fetchAllSeasons()
-      console.log("Signup successful, token:", response.data.token)
-    } catch (error) {
-      alert("Signup failed: " + (error.response?.data?.error || "Server error"))
-    }
+  try {
+    const response = await axios.post(
+      `${api}/auth/signup`,
+      userData,
+      { withCredentials: true } // <-- important if your server sets cookies
+    );
+    localStorage.setItem("token", response.data.token);
+    setIsAuthenticated(true);
+    setCurrentPage("dashboard");
+    await fetchSeason();
+    await fetchAllSeasons();
+    console.log("Signup successful, token:", response.data.token);
+  } catch (error) {
+    alert("Signup failed: " + (error.response?.data?.error || "Server error"));
   }
+};
+
 
   const handleLogout = () => {
     localStorage.removeItem("token")
