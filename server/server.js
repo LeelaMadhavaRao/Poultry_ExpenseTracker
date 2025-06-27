@@ -35,7 +35,11 @@ app.use('/api/users', userRoutes);
 
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true });
+  res.status(200).json({
+    ok: true,
+    mongoUri: process.env.mongoURI ? 'Present' : 'Missing',
+    jwtSecret: process.env.jwtSecret ? 'Present' : 'Missing'
+  });
 });
 
 
