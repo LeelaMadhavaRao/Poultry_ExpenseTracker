@@ -34,15 +34,6 @@ app.use('/api', seasonRoutes);
 app.use('/api/users', userRoutes);
 
 
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    ok: true,
-    mongoUri: process.env.mongoURI ? 'Present' : 'Missing',
-    jwtSecret: process.env.jwtSecret ? 'Present' : 'Missing'
-  });
-});
-
-
 // MongoDB Connection
 const connectDB = require('./config/db');
 connectDB();
