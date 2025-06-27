@@ -33,6 +33,12 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api', seasonRoutes);
 app.use('/api/users', userRoutes);
 
+
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true });
+});
+
+
 // MongoDB Connection
 const connectDB = require('./config/db');
 connectDB();
