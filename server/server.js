@@ -33,6 +33,10 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api', seasonRoutes);
 app.use('/api/users', userRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Welcome to the Poultry Expense Tracker API');
+});
+
 
 // MongoDB Connection
 const connectDB = require('./config/db');
