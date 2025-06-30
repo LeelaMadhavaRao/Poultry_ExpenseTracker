@@ -13,6 +13,8 @@ import IncomeForm from "./components/IncomeForm"
 import IncomeList from "./components/IncomeList"
 import ExpenseForm from "./components/ExpenseForm"
 import ExpenseList from "./components/ExpenseList"
+import { Analytics } from '@vercel/analytics/react';
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -396,6 +398,7 @@ const fetchExpenses = async (seasonId) => {
           <h1>Poultry Farm Tracker</h1>
         </div>
         {renderCurrentPage()}
+        <Analytics /> {/* Add Analytics here */}
       </div>
       {sidebarOpen && <div className="overlay" onClick={() => setSidebarOpen(false)}></div>}
     </div>
