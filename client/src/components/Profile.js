@@ -90,7 +90,7 @@ const Profile = ({ onLogout }) => {
             <div className="form-group">
               <label>Full Name</label>
               {isEditing ? (
-                <input type="text" name="fullName" value={editForm.fullName} onChange={handleChange} required />
+                <input type="text" name="fullName" value={editForm.fullName} onChange={handleChange} />
               ) : (
                 <span className="profile-value">{profileData.fullName}</span>
               )}
@@ -99,7 +99,7 @@ const Profile = ({ onLogout }) => {
             <div className="form-group">
               <label>Email</label>
               {isEditing ? (
-                <input type="email" name="email" value={editForm.email} onChange={handleChange} required />
+                <input type="email" name="email" value={editForm.email} onChange={handleChange} />
               ) : (
                 <span className="profile-value">{profileData.email}</span>
               )}
@@ -108,7 +108,7 @@ const Profile = ({ onLogout }) => {
             <div className="form-group">
               <label>Phone Number</label>
               {isEditing ? (
-                <input type="tel" name="phoneNumber" value={editForm.phoneNumber} onChange={handleChange} required />
+                <input type="tel" name="phoneNumber" value={editForm.phoneNumber} onChange={handleChange} />
               ) : (
                 <span className="profile-value">{profileData.phoneNumber}</span>
               )}
@@ -117,7 +117,7 @@ const Profile = ({ onLogout }) => {
             <div className="form-group">
               <label>Username</label>
               {isEditing ? (
-                <input type="text" name="username" value={editForm.username} onChange={handleChange} required />
+                <input type="text" name="username" value={editForm.username} onChange={handleChange} />
               ) : (
                 <span className="profile-value">{profileData.username}</span>
               )}
@@ -126,7 +126,7 @@ const Profile = ({ onLogout }) => {
             <div className="form-group">
               <label>Farm Name</label>
               {isEditing ? (
-                <input type="text" name="farmName" value={editForm.farmName} onChange={handleChange} required />
+                <input type="text" name="farmName" value={editForm.farmName} onChange={handleChange} />
               ) : (
                 <span className="profile-value">{profileData.farmName}</span>
               )}
@@ -135,7 +135,7 @@ const Profile = ({ onLogout }) => {
             <div className="form-group">
               <label>Location</label>
               {isEditing ? (
-                <input type="text" name="location" value={editForm.location} onChange={handleChange} required />
+                <input type="text" name="location" value={editForm.location} onChange={handleChange} />
               ) : (
                 <span className="profile-value">{profileData.location}</span>
               )}
