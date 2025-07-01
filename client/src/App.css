@@ -761,7 +761,8 @@ body {
   }
 
   .main-content {
-    margin-left: 280px;
+    /* margin-left: 280px; */
+    align-items: center;
   }
 
   .mobile-header {
