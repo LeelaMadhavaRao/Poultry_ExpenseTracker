@@ -98,11 +98,11 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
           </div>
           <div className="form-group">
             <label>Farm Name</label>
-            <input type="text" name="farmName" value={formData.farmName} onChange={handleChange} />
+            <input type="text" name="farmName" value={formData.farmName} onChange={handleChange} required />
           </div>
           <div className="form-group">
             <label>Location</label>
-            <input type="text" name="location" value={formData.location} onChange={handleChange} />
+            <input type="text" name="location" value={formData.location} onChange={handleChange} required />
           </div>
           <button type="submit" className="btn-primary">
             Sign Up
