@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import api from "./Api/api"
-import axios from "axios"
 import PieChart from "./PieChart"
 
 const IncomeList = ({ incomes, onUpdateIncome, onDeleteIncome }) => {

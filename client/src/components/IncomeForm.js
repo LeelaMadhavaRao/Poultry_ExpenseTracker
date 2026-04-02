@@ -1,8 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import api from "./Api/api"
-import axios from "axios"
 
 const IncomeForm = ({ onAddIncome }) => {
   const [formData, setFormData] = useState({
