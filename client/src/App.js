@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom"
 import axios from "axios"
 import api from "./components/Api/api"
 import "./App.css"
 import Login from "./components/Login"
 import Signup from "./components/Signup"
+import Home from "./components/Home"
 import Dashboard from "./components/Dashboard"
 import Sidebar from "./components/Sidebar"
 import Profile from "./components/Profile"
@@ -17,8 +19,8 @@ import ExpenseList from "./components/ExpenseList"
 
 
 function App() {
+  const navigate = useNavigate()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [showSignup, setShowSignup] = useState(false)
   const [currentPage, setCurrentPage] = useState("dashboard")
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [currentSeason, setCurrentSeason] = useState(null)
@@ -39,6 +41,7 @@ function App() {
       fetchSeason()
       fetchAllSeasons()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchSeason = async () => {
@@ -158,6 +161,7 @@ const fetchExpenses = async (seasonId) => {
     setCurrentPage('dashboard');
     await fetchSeason();
     await fetchAllSeasons();
+    navigate('/dashboard', { replace: true })
     console.log('Login successful, token:', response.data.token);
   } catch (error) {
     console.error('Login failed:', error.response?.data?.error || error.message);
@@ -178,6 +182,7 @@ const fetchExpenses = async (seasonId) => {
     setCurrentPage("dashboard");
     await fetchSeason();
     await fetchAllSeasons();
+    navigate('/dashboard', { replace: true })
     console.log("Signup successful, token:", response.data.token);
   } catch (error) {
     alert("Signup failed: " + (error.response?.data?.error || "Server error"));
@@ -297,13 +302,26 @@ const fetchExpenses = async (seasonId) => {
 
   if (!isAuthenticated) {
     return (
-      <div className="auth-container">
-        {showSignup ? (
-          <Signup onSignup={handleSignup} onSwitchToLogin={() => setShowSignup(false)} />
-        ) : (
-          <Login onLogin={handleLogin} onSwitchToSignup={() => setShowSignup(true)} />
-        )}
-      </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route
+          path="/login"
+          element={
+            <div className="auth-container">
+              <Login onLogin={handleLogin} onSwitchToSignup={() => navigate("/signup")} />
+            </div>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <div className="auth-container">
+              <Signup onSignup={handleSignup} onSwitchToLogin={() => navigate("/login")} />
+            </div>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     )
   }
 
@@ -383,25 +401,32 @@ const fetchExpenses = async (seasonId) => {
   }
 
   return (
-    <div className="app">
-      <Sidebar
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+    <Routes>
+      <Route
+        path="/dashboard"
+        element={
+          <div className="app">
+            <Sidebar
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              sidebarOpen={sidebarOpen}
+              setSidebarOpen={setSidebarOpen}
+            />
+            <div className={`main-content ${sidebarOpen ? "sidebar-open" : ""}`}>
+              <div className="mobile-header">
+                <button className="menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                  ☰
+                </button>
+                <h1>Poultry Farm Tracker</h1>
+              </div>
+              {renderCurrentPage()}
+            </div>
+            {sidebarOpen && <div className="overlay" onClick={() => setSidebarOpen(false)}></div>}
+          </div>
+        }
       />
-      <div className={`main-content ${sidebarOpen ? "sidebar-open" : ""}`}>
-        <div className="mobile-header">
-          <button className="menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            ☰
-          </button>
-          <h1>Poultry Farm Tracker</h1>
-        </div>
-        {renderCurrentPage()}
-        
-      </div>
-      {sidebarOpen && <div className="overlay" onClick={() => setSidebarOpen(false)}></div>}
-    </div>
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
   )
 }
 

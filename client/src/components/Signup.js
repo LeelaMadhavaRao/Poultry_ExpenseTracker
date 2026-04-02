@@ -1,8 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import api from "./Api/api"
-import axios from "axios"
 
 const Signup = ({ onSignup, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
@@ -58,62 +56,77 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
   }
 
   return (
-    <div className="auth-form">
-      <div className="auth-card">
-        <h2>Sign Up for Poultry Farm Tracker</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Full Name</label>
-            <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required />
-          </div>
-          <div className="form-group">
-            <label>Email</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-            {errors.email && <span className="error">{errors.email}</span>}
-          </div>
-          <div className="form-group">
-            <label>Phone Number</label>
-            <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required />
-            {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
-          </div>
-          <div className="form-group">
-            <label>Username</label>
-            <input type="text" name="username" value={formData.username} onChange={handleChange} required />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" name="password" value={formData.password} onChange={handleChange} required />
-            {errors.password && <span className="error">{errors.password}</span>}
-          </div>
-          <div className="form-group">
-            <label>Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-            {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
-          </div>
-          <div className="form-group">
-            <label>Farm Name</label>
-            <input type="text" name="farmName" value={formData.farmName} onChange={handleChange} required />
-          </div>
-          <div className="form-group">
-            <label>Location</label>
-            <input type="text" name="location" value={formData.location} onChange={handleChange} required />
-          </div>
-          <button type="submit" className="btn-primary">
-            Sign Up
-          </button>
-        </form>
+    <div className="auth-shell auth-shell-signup">
+      <div className="auth-side-panel">
+        <p className="auth-side-kicker">Get Started</p>
+        <h2>Create Your Farm Account</h2>
         <p>
-          Already have an account?
-          <button className="link-btn" onClick={onSwitchToLogin}>
-            Login here
-          </button>
+          Build a digital record system for your poultry farm and keep every transaction organized from day one.
         </p>
+        <ul className="auth-side-list">
+          <li>Set up your farm profile in minutes</li>
+          <li>Track income and expenses season by season</li>
+          <li>Work from desktop in office or mobile in field</li>
+        </ul>
+      </div>
+
+      <div className="auth-form auth-form-signup">
+        <div className="auth-card">
+          <h2>Sign Up for Poultry Expense Tracker</h2>
+          <form onSubmit={handleSubmit} className="auth-grid-form">
+            <div className="form-group">
+              <label>Full Name</label>
+              <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+              {errors.email && <span className="error">{errors.email}</span>}
+            </div>
+            <div className="form-group">
+              <label>Phone Number</label>
+              <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required />
+              {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
+            </div>
+            <div className="form-group">
+              <label>Username</label>
+              <input type="text" name="username" value={formData.username} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+              {errors.password && <span className="error">{errors.password}</span>}
+            </div>
+            <div className="form-group">
+              <label>Confirm Password</label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+              {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
+            </div>
+            <div className="form-group">
+              <label>Farm Name</label>
+              <input type="text" name="farmName" value={formData.farmName} onChange={handleChange} required />
+            </div>
+            <div className="form-group">
+              <label>Location</label>
+              <input type="text" name="location" value={formData.location} onChange={handleChange} required />
+            </div>
+            <button type="submit" className="btn-primary auth-submit-full">
+              Sign Up
+            </button>
+          </form>
+          <p className="auth-switch-text">
+            Already have an account?
+            <button className="link-btn" onClick={onSwitchToLogin}>
+              Login here
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   )
