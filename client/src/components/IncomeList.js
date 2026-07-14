@@ -9,7 +9,7 @@ const IncomeList = ({ incomes, onUpdateIncome, onDeleteIncome }) => {
   const [editingId, setEditingId] = useState(null)
   const [editForm, setEditForm] = useState({})
 
-  const incomeCategories = ["eggs load", "eggs local", "birds sale", "Feces sale", "other"]
+  const incomeCategories = ["Eggs Load", "Eggs Local", "Birds Sale", "Feces Sale", "Other"]
 
   const filteredIncomes = useMemo(() => {
     return incomes.filter((income) => {
@@ -42,6 +42,8 @@ const IncomeList = ({ incomes, onUpdateIncome, onDeleteIncome }) => {
   }
 
   const handleSaveEdit = async () => {
+    if (!editForm.name?.trim()) { alert("Name cannot be empty"); return }
+    if (!editForm.amount || isNaN(Number.parseFloat(editForm.amount)) || Number.parseFloat(editForm.amount) <= 0) { alert("Amount must be a valid positive number"); return }
     await onUpdateIncome(editingId, {
       ...editForm,
       amount: Number.parseFloat(editForm.amount),
@@ -106,20 +108,20 @@ const IncomeList = ({ incomes, onUpdateIncome, onDeleteIncome }) => {
                           <input
                             type="text"
                             value={editForm.name}
-                            onChange={(e) => setEditForm({ ...editForm, name: (e.target.value==null || e.target.value.trim() === "") ? alert("Name cannot be empty") : e.target.value }) }
+                            onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                           />
                         </td>
                         <td>
                           <input
                             type="date"
                             value={editForm.date}
-                            onChange={(e) => setEditForm({ ...editForm, date: (e.target.value.trim() === "") ? alert("Date cannot be empty") : e.target.value })}
+                             onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
                           />
                         </td>
                         <td>
                           <select
                             value={editForm.category}
-                            onChange={(e) => setEditForm({ ...editForm, category: (e.target.value.trim() === "") ? alert("Category cannot be empty") : e.target.value })}
+                             onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
                           >
                             {incomeCategories.map((category) => (
                               <option key={category} value={category}>
@@ -132,7 +134,7 @@ const IncomeList = ({ incomes, onUpdateIncome, onDeleteIncome }) => {
                           <input
                             type="number"
                             value={editForm.amount}
-                            onChange={(e) => setEditForm({ ...editForm, amount: (e.target.value.trim() === "" || isNaN(e.target.value)) ? alert("Amount must be a valid number") : Number.parseFloat(e.target.value) })}
+                             onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
                           />
                         </td>
                         <td>

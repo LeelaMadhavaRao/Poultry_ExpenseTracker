@@ -14,7 +14,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     const token = jwt.sign({ userId: user._id }, process.env.jwtSecret, { expiresIn: '7d' });
-    console.log('Login successful for user:', user._id, 'token:', token);
+    console.log('Login successful for user:', user._id);
     res.json({ token });
   } catch (error) {
     console.error('Error during login:', error.message, error.stack);
@@ -56,7 +56,7 @@ exports.signup = async (req, res) => {
     await user.save();
 
     const token = jwt.sign({ userId: user._id }, process.env.jwtSecret, { expiresIn: '7d' });
-    console.log('Signup successful for user:', user._id, 'token:', token);
+    console.log('Signup successful for user:', user._id);
     res.status(201).json({ token });
   } catch (error) {
     console.error('Error during signup:', error.message, error.stack);

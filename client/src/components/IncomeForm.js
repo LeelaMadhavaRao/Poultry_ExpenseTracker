@@ -7,10 +7,10 @@ const IncomeForm = ({ onAddIncome }) => {
     name: "",
     amount: "",
     date: new Date().toISOString().split("T")[0],
-    category: "eggs local",
+      category: "Eggs Local",
   })
 
-  const incomeCategories = ["eggs load", "eggs local", "birds sale", "Feces sale", "other"]
+  const incomeCategories = ["Eggs Load", "Eggs Local", "Birds Sale", "Feces Sale", "Other"]
 
   const handleChange = (e) => {
     setFormData({
@@ -29,7 +29,7 @@ const IncomeForm = ({ onAddIncome }) => {
       name: "",
       amount: "",
       date: new Date().toISOString().split("T")[0],
-      category: "eggs local",
+    category: "Eggs Local",
     })
   }
 

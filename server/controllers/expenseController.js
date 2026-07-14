@@ -29,10 +29,11 @@ exports.addExpense = async (req, res) => {
     if (!seasonId || !mongoose.isValidObjectId(seasonId)) {
       return res.status(400).json({ error: 'Valid seasonId is required' });
     }
-    const expense = new Expense({ name, amount, date, category, userId: req.user.userId, seasonId: mongoose.Types.ObjectId(seasonId) });
+    const expense = new Expense({ name, amount, date, category, userId: mongoose.Types.ObjectId(req.user.userId), seasonId: mongoose.Types.ObjectId(seasonId) });
     await expense.save();
     res.status(201).json(expense);
   } catch (error) {
+    console.error('Error adding expense:', error.message);
     res.status(500).json({ error: 'Server error' });
   }
 };

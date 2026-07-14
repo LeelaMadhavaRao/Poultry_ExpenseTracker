@@ -7,27 +7,27 @@ const ExpenseForm = ({ onAddExpense }) => {
     name: "",
     amount: "",
     date: new Date().toISOString().split("T")[0],
-    category: "Birds purchase",
+      category: "Birds Purchase",
   })
 
   const expenseCategories = [
-    "Birds purchase",
+    "Birds Purchase",
     "Maize",
     "Stone",
-    "soybean",
-    "broken rice",
-    "feed medicines",
-    "liquid medicines",
-    "vaccination",
-    "Machinary purchase",
-    "maintenance",
-    "diesel",
-    "electricity",
+    "Soybean",
+    "Broken Rice",
+    "Feed Medicines",
+    "Liquid Medicines",
+    "Vaccination",
+    "Machinery Purchase",
+    "Maintenance",
+    "Diesel",
+    "Electricity",
     "Labour",
     "Tax",
     "Construction",
-    "PersonalUse",
-    "other",
+    "Personal Use",
+    "Other",
   ]
 
   const handleChange = (e) => {
@@ -47,7 +47,7 @@ const ExpenseForm = ({ onAddExpense }) => {
       name: "",
       amount: "",
       date: new Date().toISOString().split("T")[0],
-      category: "Birds purchase",
+    category: "Birds Purchase",
     })
   }
 

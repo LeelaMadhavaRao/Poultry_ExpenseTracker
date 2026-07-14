@@ -32,10 +32,11 @@ exports.addIncome = async (req, res) => {
     if (!seasonId || !mongoose.isValidObjectId(seasonId)) {
       return res.status(400).json({ error: 'Valid seasonId is required' });
     }
-    const income = new Income({ name, amount, date, category, userId: req.user.userId, seasonId: mongoose.Types.ObjectId(seasonId) });
+    const income = new Income({ name, amount, date, category, userId: mongoose.Types.ObjectId(req.user.userId), seasonId: mongoose.Types.ObjectId(seasonId) });
     await income.save();
     res.status(201).json(income);
   } catch (error) {
+    console.error('Error adding income:', error.message);
     res.status(500).json({ error: 'Server error' });
   }
 };

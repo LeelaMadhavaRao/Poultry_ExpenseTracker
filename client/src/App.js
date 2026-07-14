@@ -52,7 +52,6 @@ function App() {
       setCurrentSeason(response.data)
       setShowSeasonForm(false)
       setCurrentPage("dashboard")
-      console.log("Fetched current season:", response.data)
       await Promise.all([fetchIncomes(response.data._id), fetchExpenses(response.data._id)])
     } catch (error) {
       if (error.response?.status === 404) {
@@ -74,7 +73,6 @@ function App() {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       setAllSeasons(response.data)
-      console.log("Fetched all seasons:", response.data)
     } catch (error) {
       console.error("Error fetching all seasons:", error)
       if (error.response?.status === 404) {
@@ -91,7 +89,6 @@ function App() {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     setIncomes(response.data);
-    console.log("Fetched incomes:", response.data);
   } catch (error) {
     console.error("Error fetching incomes:", error.response?.data || error.message);
     setIncomes([]);
@@ -105,7 +102,6 @@ const fetchExpenses = async (seasonId) => {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     setExpenses(response.data);
-    console.log("Fetched expenses:", response.data);
   } catch (error) {
     console.error("Error fetching expenses:", error.response?.data || error.message);
     setExpenses([]);
@@ -144,7 +140,7 @@ const fetchExpenses = async (seasonId) => {
         startDate: new Date().toISOString().split("T")[0],
         endDate: null,
       })
-      console.log("Created new season:", response.data)
+      console.log("Created new season:", response.data._id)
     } catch (error) {
       alert("Error creating season: " + (error.response?.data?.error || "Server error"))
     }
@@ -152,7 +148,7 @@ const fetchExpenses = async (seasonId) => {
 
   const handleLogin = async (credentials) => {
   try {
-    console.log('Login attempt with credentials:', credentials);
+    console.log('Login attempt for user:', credentials.username);
     const response = await axios.post(`${api}/auth/login`, credentials, {
       headers: { 'Content-Type': 'application/json' }
     });
@@ -162,7 +158,6 @@ const fetchExpenses = async (seasonId) => {
     await fetchSeason();
     await fetchAllSeasons();
     navigate('/dashboard', { replace: true })
-    console.log('Login successful, token:', response.data.token);
   } catch (error) {
     console.error('Login failed:', error.response?.data?.error || error.message);
     alert('Login failed: ' + (error.response?.data?.error || 'Server error'));
@@ -183,7 +178,6 @@ const fetchExpenses = async (seasonId) => {
     await fetchSeason();
     await fetchAllSeasons();
     navigate('/dashboard', { replace: true })
-    console.log("Signup successful, token:", response.data.token);
   } catch (error) {
     alert("Signup failed: " + (error.response?.data?.error || "Server error"));
   }
@@ -283,6 +277,7 @@ const fetchExpenses = async (seasonId) => {
   }
 
   const endSeason = async () => {
+    if (!window.confirm("Are you sure you want to end this season? This action cannot be undone.")) return
     try {
       const response = await axios.put(
         `${api}/seasons/${currentSeason._id}/end`,
@@ -294,7 +289,6 @@ const fetchExpenses = async (seasonId) => {
       setIncomes([])
       setExpenses([])
       setShowSeasonForm(true)
-      alert("Season ended successfully!")
     } catch (error) {
       alert("Error ending season: " + (error.response?.data?.error || "Server error"))
     }

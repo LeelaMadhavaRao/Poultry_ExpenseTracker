@@ -807,6 +807,13 @@ body {
   }
 }
 
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
 .balance-section {
   text-align: center;
 }
@@ -1228,10 +1235,11 @@ body {
   .sidebar {
     position: static;
     left: 0;
+    flex-shrink: 0;
   }
 
   .main-content {
-    /* margin-left: 280px; */
+    margin-left: 0;
     align-items: center;
   }
 
@@ -1249,6 +1257,10 @@ body {
   .dashboard-grid {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+
+  .summary-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .list-content {
@@ -1348,6 +1360,10 @@ body {
   }
 
   .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-cards {
     grid-template-columns: 1fr;
   }
 

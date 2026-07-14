@@ -17,7 +17,9 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://poultry-expense-tracker-q5h2.vercel.app'
+    'https://poultry-expense-tracker-q5h2.vercel.app',
+    'https://poultry-expense-tracker-pout.vercel.app',
+    'https://poultry-expense-tracker.vercel.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
