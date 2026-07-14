@@ -64,7 +64,7 @@ function App() {
       })
       fetchAllSeasons()
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, fetchSeason, fetchAllSeasons, fetchIncomes, fetchExpenses])
 
   const handleLogin = async (credentials) => {
     await login(credentials)

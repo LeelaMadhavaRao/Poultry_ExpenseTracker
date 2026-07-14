@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef, useCallback } from "react"
 import PropTypes from "prop-types"
 
@@ -7,7 +5,11 @@ const AnimatedNumber = ({ value, duration = 1000, prefix = "₹ ", format = true
   const [displayValue, setDisplayValue] = useState(0)
   const animationRef = useRef(null)
   const startTimeRef = useRef(null)
-  const startValueRef = useRef(0)
+  const prevDisplayRef = useRef(0)
+
+  useEffect(() => {
+    prevDisplayRef.current = displayValue
+  })
 
   const formatNumber = useCallback(
     (num) => {
@@ -25,11 +27,11 @@ const AnimatedNumber = ({ value, duration = 1000, prefix = "₹ ", format = true
       cancelAnimationFrame(animationRef.current)
     }
 
-    startValueRef.current = displayValue
+    const startValue = prevDisplayRef.current
     startTimeRef.current = null
 
     const targetValue = Number(value) || 0
-    if (targetValue === startValueRef.current) {
+    if (targetValue === startValue) {
       setDisplayValue(targetValue)
       return
     }
@@ -44,8 +46,7 @@ const AnimatedNumber = ({ value, duration = 1000, prefix = "₹ ", format = true
 
       const eased = 1 - Math.pow(1 - progress, 3)
 
-      const current =
-        startValueRef.current + (targetValue - startValueRef.current) * eased
+      const current = startValue + (targetValue - startValue) * eased
       setDisplayValue(current)
 
       if (progress < 1) {
@@ -60,6 +61,7 @@ const AnimatedNumber = ({ value, duration = 1000, prefix = "₹ ", format = true
         cancelAnimationFrame(animationRef.current)
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, duration])
 
   const formattedDisplay =
@@ -68,18 +70,11 @@ const AnimatedNumber = ({ value, duration = 1000, prefix = "₹ ", format = true
       : formatNumber(Math.round(displayValue * 100) / 100)
 
   return (
-    <span style={styles.number}>
+    <span className="animated-number">
       {prefix}
       {formattedDisplay}
     </span>
   )
-}
-
-const styles = {
-  number: {
-    fontFamily: "'Manrope', 'Segoe UI', sans-serif",
-    fontVariantNumeric: "tabular-nums",
-  },
 }
 
 AnimatedNumber.propTypes = {
