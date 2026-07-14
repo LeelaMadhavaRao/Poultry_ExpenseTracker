@@ -22,6 +22,10 @@ import SeasonComparison from "./components/SeasonComparison"
 import BudgetComparison from "./components/BudgetComparison"
 import LanguageSwitcher from "./components/LanguageSwitcher"
 import HelpGuide from "./components/HelpGuide"
+import BirdTracker from "./components/BirdTracker"
+import FeedTracker from "./components/FeedTracker"
+import FarmManagement from "./components/FarmManagement"
+import ReminderPanel from "./components/ReminderPanel"
 import Loading from "./components/common/Loading"
 
 function App() {
@@ -222,6 +226,14 @@ function App() {
             }}
           />
         )
+      case "birds":
+        return <BirdTracker seasonId={currentSeason?._id} />
+      case "feed":
+        return <FeedTracker seasonId={currentSeason?._id} />
+      case "farms":
+        return <FarmManagement />
+      case "reminders":
+        return <ReminderPanel />
       default:
         return (
           <Dashboard

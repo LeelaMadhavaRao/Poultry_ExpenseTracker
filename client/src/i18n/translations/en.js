@@ -10,6 +10,10 @@ const en = {
   "nav.expenseList": "Expense List",
   "nav.compareSeasons": "Compare Seasons",
   "nav.budgetTracker": "Budget Tracker",
+  "nav.birdTracker": "Bird Tracker",
+  "nav.feedTracker": "Feed Tracker",
+  "nav.myFarms": "My Farms",
+  "nav.reminders": "Reminders",
   "nav.themeToggle": "Dark Mode",
   "nav.lightMode": "Light Mode",
 

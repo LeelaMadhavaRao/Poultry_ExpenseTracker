@@ -3,11 +3,15 @@ const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
   try {
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'Database not connected. Please try again in a moment.' });
+    }
     const { username, password } = req.body;
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
-    const user = await User.findOne({ username }).select('+password');
+    const user = await User.findOne({ username }).select('+password').maxTimeMS(5000);
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -15,7 +19,11 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const token = jwt.sign({ userId: user._id }, process.env.jwtSecret, { expiresIn: '7d' });
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.jwtSecret || 'fallback-secret-do-not-use-in-production',
+      { expiresIn: '7d' }
+    );
     res.json({ token, userId: user._id });
   } catch (error) {
     console.error('Login error:', error.message, error.stack);

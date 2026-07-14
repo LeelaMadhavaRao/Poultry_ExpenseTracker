@@ -3,6 +3,7 @@ import PropTypes from "prop-types"
 import PieChart from "./PieChart"
 import Charts from "./Charts"
 import AnimatedNumber from "./common/AnimatedNumber"
+import DashboardCards from "./DashboardCards"
 import { exportToCSV, generateSeasonPDF } from "../utils/exportData"
 import { useTranslation } from "../i18n/i18n"
 
@@ -147,7 +148,8 @@ const Dashboard = ({ incomes, expenses, currentSeason, allSeasons, onEndSeason, 
 
       <div className="dashboard-grid">
         <div className="dashboard-left">
-          <div className="pie-chart-container">
+          <DashboardCards seasonId={currentSeason?._id} />
+          <div className="pie-chart-container" style={{ marginTop: 20 }}>
             <h3>{t("dashboard.incomeVsExpenses")}</h3>
             <PieChart data={pieChartData} />
           </div>

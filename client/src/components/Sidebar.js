@@ -17,6 +17,10 @@ const Sidebar = ({ currentPage, setCurrentPage, sidebarOpen, setSidebarOpen }) =
   const menuItems = [
     { id: "profile", label: t("nav.profile"), icon: "👤" },
     { id: "dashboard", label: t("nav.dashboard"), icon: "📊" },
+    { id: "birds", label: t("nav.birdTracker"), icon: "🐔" },
+    { id: "feed", label: t("nav.feedTracker"), icon: "🌾" },
+    { id: "farms", label: t("nav.myFarms"), icon: "🏠" },
+    { id: "reminders", label: t("nav.reminders"), icon: "🔔" },
     { id: "comparison", label: t("nav.compareSeasons"), icon: "⚖️" },
     { id: "budget", label: t("nav.budgetTracker"), icon: "🎯" },
     {

@@ -12,6 +12,9 @@ const seasonRoutes = require('./routes/seasonRoutes');
 const userRoutes = require('./routes/userRoutes');
 const farmRoutes = require('./routes/farmRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
+const birdRoutes = require('./routes/birdRoutes');
+const feedRoutes = require('./routes/feedRoutes');
+const reminderRoutes = require('./routes/reminderRoutes');
 
 dotenv.config();
 const app = express();
@@ -53,6 +56,9 @@ app.use('/api', seasonRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/farms', apiLimiter, farmRoutes);
 app.use('/api/budgets', apiLimiter, budgetRoutes);
+app.use('/api', birdRoutes);
+app.use('/api', feedRoutes);
+app.use('/api', reminderRoutes);
 
 app.get('/', (req, res) => {
   res.json({
