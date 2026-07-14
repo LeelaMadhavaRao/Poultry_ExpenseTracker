@@ -1,19 +1,21 @@
 const rateLimit = require('express-rate-limit');
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
+  windowMs: 2 * 60 * 1000,
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'Too many requests, please try again after 15 minutes' },
+  keyGenerator: (req) => req.headers['x-forwarded-for'] || req.ip,
+  message: { error: 'Too many requests, please try again after 2 minutes' },
 });
 
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+  windowMs: 2 * 60 * 1000,
+  max: 200,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'Too many requests, please try again after 15 minutes' },
+  keyGenerator: (req) => req.headers['x-forwarded-for'] || req.ip,
+  message: { error: 'Too many requests, please try again after 2 minutes' },
 });
 
 module.exports = { authLimiter, apiLimiter };
