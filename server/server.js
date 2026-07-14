@@ -2,45 +2,66 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const morgan = require('morgan');
+const helmet = require('helmet');
+const { apiLimiter } = require('./middleware/rateLimiter');
 const authRoutes = require('./routes/authRoutes');
 const incomeRoutes = require('./routes/incomeRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const seasonRoutes = require('./routes/seasonRoutes');
 const userRoutes = require('./routes/userRoutes');
+const farmRoutes = require('./routes/farmRoutes');
+const budgetRoutes = require('./routes/budgetRoutes');
 
 dotenv.config();
 const app = express();
 
+app.use(helmet());
 
-
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',')
+  : [
+      'http://localhost:3000',
+      'https://poultry-expense-tracker-q5h2.vercel.app',
+      'https://poultry-expense-tracker-pout.vercel.app',
+      'https://poultry-expense-tracker.vercel.app',
+    ];
 
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://poultry-expense-tracker-q5h2.vercel.app',
-    'https://poultry-expense-tracker-pout.vercel.app',
-    'https://poultry-expense-tracker.vercel.app'
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 
-app.use(express.json());
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
 
-// Routes
+app.use(express.json({ limit: '10mb' }));
+
 app.use('/api/auth', authRoutes);
-app.use('/api/incomes', incomeRoutes);
-app.use('/api/expenses', expenseRoutes);
+app.use('/api/incomes', apiLimiter, incomeRoutes);
+app.use('/api/expenses', apiLimiter, expenseRoutes);
 app.use('/api', seasonRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/farms', apiLimiter, farmRoutes);
+app.use('/api/budgets', apiLimiter, budgetRoutes);
 
 app.get('/', (req, res) => {
   res.send('Welcome to the Poultry Expense Tracker API');
 });
 
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
-// MongoDB Connection
 const connectDB = require('./config/db');
 connectDB();
 

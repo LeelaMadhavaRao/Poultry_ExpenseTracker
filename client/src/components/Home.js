@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom"
+import { useTranslation } from "../i18n/i18n"
 
 const Home = () => {
+  const { t } = useTranslation()
   return (
     <div className="home-page">
       <section className="hero">
@@ -19,7 +21,7 @@ const Home = () => {
               Create Account
             </Link>
             <Link to="/login" className="hero-btn hero-btn-secondary">
-              Login
+              {t("auth.login")}
             </Link>
           </div>
         </div>

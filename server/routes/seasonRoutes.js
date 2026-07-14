@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const seasonController = require('../controllers/seasonController');
+const { validateSeason, handleValidationErrors } = require('../middleware/validate');
 
-router.post('/seasons', auth, seasonController.createSeason);
+router.post('/seasons', auth, validateSeason, handleValidationErrors, seasonController.createSeason);
 router.get('/seasons/current', auth, seasonController.getCurrentSeason);
 router.put('/seasons/:id/end', auth, seasonController.endSeason);
 router.get('/seasons', auth, seasonController.getAllSeasons);

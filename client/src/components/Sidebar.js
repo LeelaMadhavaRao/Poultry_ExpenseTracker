@@ -1,30 +1,40 @@
-"use client"
-
 import { useState } from "react"
+import { useTranslation } from "../i18n/i18n"
 
 const Sidebar = ({ currentPage, setCurrentPage, sidebarOpen, setSidebarOpen }) => {
+  const { t } = useTranslation()
   const [incomeExpanded, setIncomeExpanded] = useState(false)
   const [expenseExpanded, setExpenseExpanded] = useState(false)
+  const [darkMode, setDarkMode] = useState(() => document.documentElement.getAttribute("data-theme") === "dark")
+
+  const toggleDarkMode = () => {
+    const next = !darkMode
+    setDarkMode(next)
+    document.documentElement.setAttribute("data-theme", next ? "dark" : "light")
+    localStorage.setItem("theme", next ? "dark" : "light")
+  }
 
   const menuItems = [
-    { id: "profile", label: "Profile", icon: "👤" },
-    { id: "dashboard", label: "Dashboard", icon: "📊" },
+    { id: "profile", label: t("nav.profile"), icon: "👤" },
+    { id: "dashboard", label: t("nav.dashboard"), icon: "📊" },
+    { id: "comparison", label: t("nav.compareSeasons"), icon: "⚖️" },
+    { id: "budget", label: t("nav.budgetTracker"), icon: "🎯" },
     {
       id: "income",
-      label: "Income",
+      label: t("nav.income"),
       icon: "💰",
       submenu: [
-        { id: "income", label: "Add Income" }, // Changed from "income-form" to "income"
-        { id: "income-list", label: "Income List" },
+        { id: "income", label: t("nav.addIncome") },
+        { id: "income-list", label: t("nav.incomeList") },
       ],
     },
     {
       id: "expenses",
-      label: "Expenses",
+      label: t("nav.expenses"),
       icon: "💸",
       submenu: [
-        { id: "expense", label: "Add Expense" }, // Changed from "expense-form" to "expense"
-        { id: "expense-list", label: "Expense List" },
+        { id: "expense", label: t("nav.addExpense") },
+        { id: "expense-list", label: t("nav.expenseList") },
       ],
     },
   ]
@@ -36,7 +46,7 @@ const Sidebar = ({ currentPage, setCurrentPage, sidebarOpen, setSidebarOpen }) =
       setExpenseExpanded(!expenseExpanded)
     } else {
       setCurrentPage(itemId)
-      setSidebarOpen(false) // Close sidebar on mobile after selection
+      setSidebarOpen(false)
     }
   }
 
@@ -88,6 +98,12 @@ const Sidebar = ({ currentPage, setCurrentPage, sidebarOpen, setSidebarOpen }) =
           </div>
         ))}
       </nav>
+      <div className="sidebar-footer">
+        <button className="nav-link theme-toggle" onClick={toggleDarkMode}>
+          <span className="nav-icon">{darkMode ? "☀️" : "🌙"}</span>
+          <span className="nav-label">{darkMode ? t("nav.lightMode") : t("nav.themeToggle")}</span>
+        </button>
+      </div>
     </div>
   )
 }

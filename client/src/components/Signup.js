@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslation } from "../i18n/i18n"
 
 const Signup = ({ onSignup, onSwitchToLogin }) => {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -27,21 +29,21 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
     const newErrors = {}
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match"
+      newErrors.confirmPassword = t("auth.passwordsNotMatch")
     }
 
     if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters"
+      newErrors.password = t("auth.passwordMinLength")
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Please enter a valid email"
+      newErrors.email = t("auth.invalidEmail")
     }
 
     const phoneRegex = /^[0-9]{10}$/
     if (!phoneRegex.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Please enter a valid 10-digit phone number"
+      newErrors.phoneNumber = t("auth.invalidPhone")
     }
 
     setErrors(newErrors)
@@ -72,33 +74,33 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
 
       <div className="auth-form auth-form-signup">
         <div className="auth-card">
-          <h2>Sign Up for Poultry Expense Tracker</h2>
+          <h2>{t("auth.signup")}</h2>
           <form onSubmit={handleSubmit} className="auth-grid-form">
             <div className="form-group">
-              <label>Full Name</label>
+              <label>{t("auth.fullName")}</label>
               <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label>Email</label>
+              <label>{t("auth.email")}</label>
               <input type="email" name="email" value={formData.email} onChange={handleChange} required />
               {errors.email && <span className="error">{errors.email}</span>}
             </div>
             <div className="form-group">
-              <label>Phone Number</label>
+              <label>{t("auth.phone")}</label>
               <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required />
               {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
             </div>
             <div className="form-group">
-              <label>Username</label>
+              <label>{t("auth.username")}</label>
               <input type="text" name="username" value={formData.username} onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label>Password</label>
+              <label>{t("auth.password")}</label>
               <input type="password" name="password" value={formData.password} onChange={handleChange} required />
               {errors.password && <span className="error">{errors.password}</span>}
             </div>
             <div className="form-group">
-              <label>Confirm Password</label>
+              <label>{t("auth.confirmPassword")}</label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -109,21 +111,21 @@ const Signup = ({ onSignup, onSwitchToLogin }) => {
               {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
             </div>
             <div className="form-group">
-              <label>Farm Name</label>
+              <label>{t("auth.farmName")}</label>
               <input type="text" name="farmName" value={formData.farmName} onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label>Location</label>
+              <label>{t("auth.location")}</label>
               <input type="text" name="location" value={formData.location} onChange={handleChange} required />
             </div>
             <button type="submit" className="btn-primary auth-submit-full">
-              Sign Up
+              {t("auth.signup")}
             </button>
           </form>
           <p className="auth-switch-text">
-            Already have an account?
+            {t("auth.hasAccount")}
             <button className="link-btn" onClick={onSwitchToLogin}>
-              Login here
+              {t("auth.loginHere")}
             </button>
           </p>
         </div>

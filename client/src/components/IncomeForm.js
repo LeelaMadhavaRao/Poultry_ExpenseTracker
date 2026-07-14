@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslation } from "../i18n/i18n"
 
 const IncomeForm = ({ onAddIncome }) => {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: "",
     amount: "",
@@ -36,29 +38,29 @@ const IncomeForm = ({ onAddIncome }) => {
   return (
     <div className="form-container">
       <div className="form-header">
-        <h2>Add Income</h2>
+        <h2>{t("form.addIncome")}</h2>
       </div>
       <form onSubmit={handleSubmit} className="income-form">
         <div className="form-group">
-          <label>Income Name</label>
+          <label>{t("form.name")}</label>
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter income name"
+            placeholder={t("form.name")}
             required
           />
         </div>
 
         <div className="form-group">
-          <label>Amount (₹)</label>
+          <label>{t("form.amount")}</label>
           <input
             type="number"
             name="amount"
             value={formData.amount}
             onChange={handleChange}
-            placeholder="Enter amount"
+            placeholder={t("form.amount")}
             min="0"
             step="0.01"
             required
@@ -66,12 +68,12 @@ const IncomeForm = ({ onAddIncome }) => {
         </div>
 
         <div className="form-group">
-          <label>Date</label>
+          <label>{t("form.date")}</label>
           <input type="date" name="date" value={formData.date} onChange={handleChange} required />
         </div>
 
         <div className="form-group">
-          <label>Category</label>
+          <label>{t("form.category")}</label>
           <select name="category" value={formData.category} onChange={handleChange} required>
             {incomeCategories.map((category) => (
               <option key={category} value={category}>
@@ -82,7 +84,7 @@ const IncomeForm = ({ onAddIncome }) => {
         </div>
 
         <button type="submit" className="btn-primary">
-          Add Income
+          {t("form.addIncome")}
         </button>
       </form>
     </div>

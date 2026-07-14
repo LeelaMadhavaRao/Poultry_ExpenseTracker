@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslation } from "../i18n/i18n"
 
 const ExpenseForm = ({ onAddExpense }) => {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: "",
     amount: "",
@@ -54,29 +56,29 @@ const ExpenseForm = ({ onAddExpense }) => {
   return (
     <div className="form-container">
       <div className="form-header">
-        <h2>Add Expense</h2>
+        <h2>{t("form.addExpense")}</h2>
       </div>
       <form onSubmit={handleSubmit} className="expense-form">
         <div className="form-group">
-          <label>Expense Name</label>
+          <label>{t("form.name")}</label>
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Enter expense name"
+            placeholder={t("form.name")}
             required
           />
         </div>
 
         <div className="form-group">
-          <label>Amount (₹)</label>
+          <label>{t("form.amount")}</label>
           <input
             type="number"
             name="amount"
             value={formData.amount}
             onChange={handleChange}
-            placeholder="Enter amount"
+            placeholder={t("form.amount")}
             min="0"
             step="0.01"
             required
@@ -84,12 +86,12 @@ const ExpenseForm = ({ onAddExpense }) => {
         </div>
 
         <div className="form-group">
-          <label>Date</label>
+          <label>{t("form.date")}</label>
           <input type="date" name="date" value={formData.date} onChange={handleChange} required />
         </div>
 
         <div className="form-group">
-          <label>Category</label>
+          <label>{t("form.category")}</label>
           <select name="category" value={formData.category} onChange={handleChange} required>
             {expenseCategories.map((category) => (
               <option key={category} value={category}>
@@ -100,7 +102,7 @@ const ExpenseForm = ({ onAddExpense }) => {
         </div>
 
         <button type="submit" className="btn-primary">
-          Add Expense
+          {t("form.addExpense")}
         </button>
       </form>
     </div>

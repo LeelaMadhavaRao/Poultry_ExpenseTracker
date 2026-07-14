@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslation } from "../i18n/i18n"
 
 const Login = ({ onLogin, onSwitchToSignup }) => {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -37,24 +39,29 @@ const Login = ({ onLogin, onSwitchToSignup }) => {
 
       <div className="auth-form">
         <div className="auth-card">
-          <h2>Login to Poultry Expense Tracker</h2>
+          <h2>{t("auth.login")}</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Username</label>
+              <label>{t("auth.username")}</label>
               <input type="text" name="username" value={formData.username} onChange={handleChange} required />
             </div>
             <div className="form-group">
-              <label>Password</label>
+              <label>{t("auth.password")}</label>
               <input type="password" name="password" value={formData.password} onChange={handleChange} required />
             </div>
             <button type="submit" className="btn-primary">
-              Login
+              {t("auth.login")}
             </button>
           </form>
           <p className="auth-switch-text">
-            Don't have an account?
+            <a href="/forgot-password" className="link-btn">
+              {t("auth.forgotPassword")}
+            </a>
+          </p>
+          <p className="auth-switch-text">
+            {t("auth.noAccount")}
             <button className="link-btn" onClick={onSwitchToSignup}>
-              Sign up here
+              {t("auth.signupHere")}
             </button>
           </p>
         </div>

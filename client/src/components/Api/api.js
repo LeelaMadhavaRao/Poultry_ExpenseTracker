@@ -1,2 +1,2 @@
-const api = "https://poultry-expense-tracker-pout.vercel.app/api";
+const api = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 export default api;
