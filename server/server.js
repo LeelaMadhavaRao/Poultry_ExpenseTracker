@@ -55,11 +55,19 @@ app.use('/api/farms', apiLimiter, farmRoutes);
 app.use('/api/budgets', apiLimiter, budgetRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the Poultry Expense Tracker API');
+  res.json({
+    message: 'Welcome to the Poultry Expense Tracker API',
+    status: 'running',
+    dbConnected: mongoose.connection.readyState === 1,
+  });
 });
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    dbConnected: mongoose.connection.readyState === 1,
+    timestamp: new Date().toISOString(),
+  });
 });
 
 const connectDB = require('./config/db');
