@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 let cachedConnection = null;
+let lastError = null;
 
 const connectDB = async () => {
   if (cachedConnection && mongoose.connection.readyState === 1) {
@@ -9,7 +10,8 @@ const connectDB = async () => {
 
   const uri = process.env.mongoURI;
   if (!uri) {
-    console.error('MONGO_URI not configured in environment variables');
+    lastError = 'mongoURI environment variable is NOT SET';
+    console.error(lastError);
     return null;
   }
 
@@ -20,13 +22,16 @@ const connectDB = async () => {
       socketTimeoutMS: 45000,
     });
     cachedConnection = conn;
+    lastError = null;
     console.log('MongoDB connected successfully');
     return conn;
   } catch (error) {
+    lastError = error.message;
     console.error('MongoDB connection failed:', error.message);
-    console.error('Connection string starts with:', uri.substring(0, 30) + '...');
     return null;
   }
 };
+
+connectDB.getLastError = () => lastError;
 
 module.exports = connectDB;

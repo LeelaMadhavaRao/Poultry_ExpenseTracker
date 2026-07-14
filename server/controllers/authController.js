@@ -5,7 +5,11 @@ exports.login = async (req, res) => {
   try {
     const mongoose = require('mongoose');
     if (mongoose.connection.readyState !== 1) {
-      return res.status(503).json({ error: 'Database not connected. Please try again in a moment.' });
+      const connectDB = require('../config/db');
+      const conn = await connectDB();
+      if (!conn) {
+        return res.status(503).json({ error: 'Database not connected. Please try again.', detail: connectDB.getLastError?.() || 'Unknown error' });
+      }
     }
     const { username, password } = req.body;
     if (!username || !password) {

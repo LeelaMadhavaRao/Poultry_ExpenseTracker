@@ -69,9 +69,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
+  const connectDB = require('./config/db');
   res.json({
     status: 'ok',
     dbConnected: mongoose.connection.readyState === 1,
+    dbState: ['disconnected','connected','connecting','disconnecting'][mongoose.connection.readyState] || 'unknown',
+    hasMongoURI: !!process.env.mongoURI,
+    hasJwtSecret: !!process.env.jwtSecret,
+    dbError: connectDB.getLastError ? connectDB.getLastError() : null,
     timestamp: new Date().toISOString(),
   });
 });
