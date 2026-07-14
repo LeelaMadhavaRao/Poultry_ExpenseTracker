@@ -70,8 +70,16 @@ app.get('/health', (req, res) => {
   });
 });
 
+app.use((err, req, res, next) => {
+  console.error('Global error:', err.message, err.stack);
+  res.status(500).json({ error: err.message || 'Server error', stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined });
+});
+
 const connectDB = require('./config/db');
-connectDB();
+(async () => {
+  await connectDB();
+  console.log('DB connected successfully');
+})();
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

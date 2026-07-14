@@ -3,35 +3,30 @@ const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
   try {
-    console.log('Login attempt with body:', req.body);
     const { username, password } = req.body;
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
     const user = await User.findOne({ username }).select('+password');
-    if (!user || !(await user.comparePassword(password))) {
-      console.log('Invalid credentials for username:', username);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     const token = jwt.sign({ userId: user._id }, process.env.jwtSecret, { expiresIn: '7d' });
-    console.log('Login successful for user:', user._id);
-    res.json({ token });
+    res.json({ token, userId: user._id });
   } catch (error) {
-    console.error('Error during login:', error.message, error.stack);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Login error:', error.message, error.stack);
+    res.status(500).json({ error: 'Server error', detail: error.message });
   }
 };
 
 exports.signup = async (req, res) => {
   try {
     const {
-      fullName,
-      email,
-      phoneNumber,
-      username,
-      password,
-      farmName,
-      location
+      fullName, email, phoneNumber, username, password, farmName, location
     } = req.body;
 
     if (!username || !password || !email || !phoneNumber || !fullName) {
@@ -44,23 +39,20 @@ exports.signup = async (req, res) => {
     }
 
     const user = new User({
-      fullName,
-      email,
-      phoneNumber,
-      username,
-      password,
-      farmName,
-      location
+      fullName, email, phoneNumber, username, password, farmName, location
     });
 
     await user.save();
 
-    const token = jwt.sign({ userId: user._id }, process.env.jwtSecret, { expiresIn: '7d' });
-    console.log('Signup successful for user:', user._id);
-    res.status(201).json({ token });
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.jwtSecret || 'fallback-secret-do-not-use-in-production',
+      { expiresIn: '7d' }
+    );
+    res.status(201).json({ token, userId: user._id });
   } catch (error) {
-    console.error('Error during signup:', error.message, error.stack);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Signup error:', error.message, error.stack);
+    res.status(500).json({ error: 'Server error', detail: error.message });
   }
 };
 
