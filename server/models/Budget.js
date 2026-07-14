@@ -11,6 +11,11 @@ const budgetSchema = new mongoose.Schema({
     ref: 'Season',
     required: true,
   },
+  farmId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Farm',
+    default: null,
+  },
   category: {
     type: String,
     required: true,

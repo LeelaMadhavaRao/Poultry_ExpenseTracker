@@ -11,6 +11,11 @@ const birdSchema = new mongoose.Schema({
     ref: 'Season',
     required: true,
   },
+  farmId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Farm',
+    default: null,
+  },
   name: {
     type: String,
     required: true,

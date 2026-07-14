@@ -6,6 +6,11 @@ const seasonSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  farmId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Farm',
+    default: null,
+  },
   name: {
     type: String,
     required: true,

@@ -11,6 +11,11 @@ const feedUsageSchema = new mongoose.Schema({
     ref: 'Season',
     required: true,
   },
+  farmId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Farm',
+    default: null,
+  },
   feedItemId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'FeedItem',

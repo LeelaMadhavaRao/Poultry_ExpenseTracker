@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom"
 import axios from "axios"
 import api from "./components/Api/api"
@@ -58,6 +58,39 @@ function App() {
   } = useFinances()
   const [currentPage, setCurrentPage] = useState("dashboard")
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [selectedFarmId, setSelectedFarmId] = useState(() => localStorage.getItem("selectedFarmId") || null)
+  const [farms, setFarms] = useState([])
+
+  const fetchFarms = useCallback(async () => {
+    try {
+      const res = await axios.get(`${api}/farms`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      })
+      const farmList = Array.isArray(res.data) ? res.data : []
+      setFarms(farmList)
+      if (!selectedFarmId && farmList.length > 0) {
+        setSelectedFarmId(farmList[0]._id)
+        localStorage.setItem("selectedFarmId", farmList[0]._id)
+      }
+    } catch { setFarms([]) }
+  }, [selectedFarmId])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchSeason().then((season) => {
+        if (season?._id) {
+          Promise.all([fetchIncomes(season._id), fetchExpenses(season._id)])
+        }
+      })
+      fetchAllSeasons()
+      fetchFarms()
+    }
+  }, [isAuthenticated, fetchSeason, fetchAllSeasons, fetchIncomes, fetchExpenses, fetchFarms])
+
+  const handleFarmChange = (farmId) => {
+    setSelectedFarmId(farmId)
+    localStorage.setItem("selectedFarmId", farmId)
+  }
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -270,9 +303,18 @@ function App() {
               </div>
               <div className="desktop-header">
                 <h1>Poultry Farm Tracker</h1>
-                <span className="season-indicator">
-                  {currentSeason ? `${currentSeason.name} - ${currentSeason.isActive ? "Active" : "Ended"}` : "No Season"}
-                </span>
+                <div className="header-info">
+                  {farms.length > 1 && (
+                    <select className="farm-selector" value={selectedFarmId || ""} onChange={(e) => handleFarmChange(e.target.value)}>
+                      {farms.map((f) => (
+                        <option key={f._id} value={f._id}>{f.name}</option>
+                      ))}
+                    </select>
+                  )}
+                  <span className="season-indicator">
+                    {currentSeason ? `${currentSeason.name} - ${currentSeason.isActive ? "Active" : "Ended"}` : "No Season"}
+                  </span>
+                </div>
               </div>
               {renderCurrentPage()}
             </div>

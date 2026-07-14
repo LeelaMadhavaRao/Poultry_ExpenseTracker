@@ -11,51 +11,84 @@ import Loading from "./common/Loading"
 const UNITS = ["kg", "quintal", "bag"]
 const CATEGORIES = ["feed", "medicine", "supplement", "other"]
 
+const categoryBadgeColors = {
+  feed: { bg: "#14b8a6", text: "#fff" },
+  medicine: { bg: "#f97316", text: "#fff" },
+  supplement: { bg: "#8b5cf6", text: "#fff" },
+  other: { bg: "#6b7280", text: "#fff" },
+}
+
 const injectCSS = `
-.feedtracker-wrapper { padding: 20px; max-width: 1200px; margin: 0 auto; }
-.feedtracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
-.feedtracker-header h2 { font-family: 'Sora', sans-serif; font-size: 24px; color: var(--color-text); margin: 0; }
-.feedtracker-add-btn { width: auto !important; padding: 10px 24px !important; }
-.feedtracker-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-.feedtracker-summary-card { background: var(--color-surface); border-radius: var(--radius-md); padding: 18px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 12px; }
-.feedtracker-summary-icon { font-size: 28px; flex-shrink: 0; }
-.feedtracker-summary-label { font-size: 12px; color: var(--color-text-muted); font-family: 'Manrope', sans-serif; margin-bottom: 2px; }
-.feedtracker-summary-value { font-size: 20px; font-weight: 700; font-family: 'Sora', sans-serif; color: var(--color-text); }
-.feedtracker-summary-value.accent { color: var(--color-primary); }
-.feedtracker-tabs { display: flex; gap: 0; margin-bottom: 20px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--color-border); }
-.feedtracker-tab { flex: 1; padding: 12px 20px; border: none; background: var(--color-surface); color: var(--color-text-muted); cursor: pointer; font-family: 'Manrope', sans-serif; font-size: 14px; font-weight: 600; transition: all var(--transition); }
-.feedtracker-tab:hover { background: var(--color-bg); }
-.feedtracker-tab.active { background: var(--color-primary); color: #fff; }
-.feedtracker-panel { background: var(--color-surface); border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-sm); }
-.feedtracker-form-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; align-items: end; }
-.feedtracker-empty { text-align: center; padding: 40px; color: var(--color-text-muted); font-family: 'Manrope', sans-serif; }
-.feedtracker-daily-summary { background: var(--color-bg); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-family: 'Manrope', sans-serif; }
-.feedtracker-daily-summary strong { font-size: 16px; color: var(--color-text); }
-.feedtracker-icon-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 2px 6px; }
+.ft-wrapper { padding: 20px; max-width: 1200px; margin: 0 auto; }
+.ft-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 12px; }
+.ft-header h2 { font-family: var(--font-display); font-size: 24px; color: var(--color-text); margin: 0; }
+
+.ft-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid var(--color-border); }
+.ft-tab { padding: 12px 24px; border: none; background: none; color: var(--color-text-muted); cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 600; position: relative; transition: color var(--transition); }
+.ft-tab:hover { color: var(--color-text); }
+.ft-tab.active { color: var(--color-primary); }
+.ft-tab.active::after { content: ""; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--color-primary); border-radius: 2px 2px 0 0; }
+
+.ft-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.ft-summary-card { padding: 18px; display: flex; align-items: center; gap: 14px; border-radius: var(--radius-lg); }
+.ft-summary-icon-circle { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.ft-summary-icon-circle.feed { background: var(--color-primary-fixed); color: var(--color-primary-dark); }
+.ft-summary-icon-circle.medicine { background: var(--color-error-container); color: var(--color-danger); }
+.ft-summary-icon-circle.grand { background: rgba(255,255,255,0.2); color: #fff; }
+.ft-summary-label { font-size: 12px; color: var(--color-text-muted); font-family: var(--font-body); margin-bottom: 3px; }
+.ft-summary-value { font-size: 18px; font-weight: 700; font-family: var(--font-display); color: var(--color-text); }
+.ft-summary-card.grand-total { background: var(--color-primary); color: #fff; }
+.ft-summary-card.grand-total .ft-summary-label { color: rgba(255,255,255,0.75); }
+.ft-summary-card.grand-total .ft-summary-value { color: #fff; }
+
+.ft-panel { padding: 0; }
+.ft-panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.ft-panel-head h3 { font-family: var(--font-display); font-size: 16px; color: var(--color-text); margin: 0; }
+
+.ft-form-card { background: var(--color-surface-container-lowest); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--color-border); margin-bottom: 20px; }
+.ft-form-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-items: end; margin-bottom: 12px; }
+
+.ft-empty { text-align: center; padding: 40px; color: var(--color-text-muted); font-family: var(--font-body); }
+
+.ft-category-badge { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: capitalize; }
+
+.ft-icon-btn { background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: var(--radius-sm); transition: background var(--transition); }
+.ft-icon-btn:hover { background: var(--color-surface-container); }
+.ft-icon-btn.edit { color: var(--color-secondary); }
+.ft-icon-btn.delete { color: var(--color-danger); }
+
+.ft-bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 24px; }
+.ft-bento-card { padding: 18px; border-radius: var(--radius-lg); }
+.ft-bento-card.efficiency { background: var(--color-primary-container); color: var(--color-on-primary-container); }
+.ft-bento-card.stock { background: var(--color-error-container); color: var(--color-danger); }
+.ft-bento-card.delivery { background: var(--color-surface-container-lowest); border-left: 4px solid var(--color-tertiary); box-shadow: var(--shadow-sm); border-top: 1px solid var(--color-border); border-right: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+.ft-bento-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; opacity: 0.85; }
+.ft-bento-value { font-size: 20px; font-weight: 700; font-family: var(--font-display); }
+.ft-bento-sub { font-size: 12px; margin-top: 4px; opacity: 0.8; }
+
+.ft-load-more { text-align: center; margin-top: 16px; }
 
 @media (max-width: 1023px) {
-  .feedtracker-form-row { grid-template-columns: repeat(2, 1fr); }
-  .feedtracker-summary { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .ft-form-row { grid-template-columns: repeat(2, 1fr); }
+  .ft-bento { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 767px) {
-  .feedtracker-wrapper { padding: 15px; }
-  .feedtracker-header { flex-direction: column; align-items: stretch; }
-  .feedtracker-header h2 { font-size: 20px; }
-  .feedtracker-tabs { flex-direction: column; border-radius: var(--radius-sm); }
-  .feedtracker-tab { text-align: center; }
-  .feedtracker-form-row { grid-template-columns: 1fr; }
-  .feedtracker-summary { grid-template-columns: 1fr; }
-  .feedtracker-summary-card { padding: 14px; }
-  .feedtracker-panel { padding: 16px; }
-}
-@media (max-width: 480px) {
-  .feedtracker-summary-value { font-size: 16px; }
-  .feedtracker-summary-icon { font-size: 22px; }
+  .ft-wrapper { padding: 15px; }
+  .ft-header { flex-direction: column; align-items: stretch; }
+  .ft-header h2 { font-size: 20px; }
+  .ft-tabs { flex-direction: column; border-bottom: none; }
+  .ft-tab { text-align: center; border-bottom: 1px solid var(--color-border); }
+  .ft-tab.active::after { display: none; }
+  .ft-tab.active { background: var(--color-primary-fixed); }
+  .ft-summary { grid-template-columns: 1fr; }
+  .ft-form-row { grid-template-columns: 1fr; }
+  .ft-bento { grid-template-columns: 1fr; }
+  .ft-panel-head { flex-direction: column; align-items: stretch; }
 }
 `
 
 if (typeof document !== "undefined") {
-  const styleId = "feedtracker-styles"
+  const styleId = "feedtracker-poultrypro-styles"
   if (!document.getElementById(styleId)) {
     const styleEl = document.createElement("style")
     styleEl.id = styleId
@@ -79,6 +112,8 @@ const FeedTracker = ({ seasonId }) => {
   const [usageForm, setUsageForm] = useState({ feedItemId: "", date: new Date().toISOString().split("T")[0], quantity: "", pricePerUnit: "", notes: "" })
   const [usageSubmitting, setUsageSubmitting] = useState(false)
   const [editingUsage, setEditingUsage] = useState(null)
+
+  const [visibleUsageCount, setVisibleUsageCount] = useState(10)
 
   const headers = useMemo(() => ({ Authorization: `Bearer ${localStorage.getItem("token")}` }), [])
 
@@ -110,6 +145,10 @@ const FeedTracker = ({ seasonId }) => {
   useEffect(() => {
     fetchFeedData()
   }, [fetchFeedData])
+
+  useEffect(() => {
+    setVisibleUsageCount(10)
+  }, [activeTab])
 
   const selectedFeedItem = feedItems.find((fi) => fi._id === usageForm.feedItemId)
 
@@ -225,63 +264,78 @@ const FeedTracker = ({ seasonId }) => {
   }
 
   const sortedUsage = [...usageEntries].sort((a, b) => new Date(b.date) - new Date(a.date))
+  const visibleUsage = sortedUsage.slice(0, visibleUsageCount)
+  const todayDate = new Date().toISOString().split("T")[0]
+  const todayCost = sortedUsage
+    .filter((u) => u.date && new Date(u.date).toISOString().split("T")[0] === todayDate)
+    .reduce((sum, u) => sum + (u.quantity || 0) * (u.pricePerUnit || 0), 0)
+  const totalUsageCost = sortedUsage.reduce((sum, u) => sum + (u.quantity || 0) * (u.pricePerUnit || 0), 0)
+  const avgDailyCost = sortedUsage.length > 0 ? totalUsageCost / Math.max(1, new Set(sortedUsage.map((u) => u.date ? new Date(u.date).toISOString().split("T")[0] : "").filter(Boolean)).size) : 0
+  const lowStockItems = feedItems.filter((fi) => sortedUsage.filter((u) => (u.feedItemId?._id || u.feedItemId) === fi._id).length === 0)
 
   if (loading) return <Loading message="Loading feed data..." />
 
   return (
-    <div className="feedtracker-wrapper">
-      <div className="feedtracker-header">
-        <h2>Feed Tracker</h2>
-        {activeTab === "catalog" && (
-          <button className="btn-primary feedtracker-add-btn" onClick={openAddItemModal}>
-            + Add Feed Item
-          </button>
-        )}
-      </div>
-
-      <div className="feedtracker-summary">
-        <div className="feedtracker-summary-card">
-          <span className="feedtracker-summary-icon">🌾</span>
-          <div>
-            <div className="feedtracker-summary-label">Total Feed Cost</div>
-            <div className="feedtracker-summary-value">₹{feedSummary.totalFeed.toLocaleString()}</div>
-          </div>
-        </div>
-        <div className="feedtracker-summary-card">
-          <span className="feedtracker-summary-icon">💊</span>
-          <div>
-            <div className="feedtracker-summary-label">Total Medicine Cost</div>
-            <div className="feedtracker-summary-value">₹{feedSummary.totalMedicine.toLocaleString()}</div>
-          </div>
-        </div>
-        <div className="feedtracker-summary-card">
-          <span className="feedtracker-summary-icon">🧾</span>
-          <div>
-            <div className="feedtracker-summary-label">Grand Total</div>
-            <div className="feedtracker-summary-value accent">₹{feedSummary.grandTotal.toLocaleString()}</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="feedtracker-tabs">
-        <button className={`feedtracker-tab ${activeTab === "catalog" ? "active" : ""}`} onClick={() => setActiveTab("catalog")}>
+    <div className="ft-wrapper">
+      <div className="ft-tabs">
+        <button className={`ft-tab ${activeTab === "catalog" ? "active" : ""}`} onClick={() => setActiveTab("catalog")}>
+          <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: "middle", marginRight: 6 }}>inventory_2</span>
           Feed Items Catalog
         </button>
-        <button className={`feedtracker-tab ${activeTab === "usage" ? "active" : ""}`} onClick={() => setActiveTab("usage")}>
+        <button className={`ft-tab ${activeTab === "usage" ? "active" : ""}`} onClick={() => setActiveTab("usage")}>
+          <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: "middle", marginRight: 6 }}>receipt_long</span>
           Daily Usage Log
         </button>
       </div>
 
+      <div className="ft-summary">
+        <div className="ft-summary-card glass-card">
+          <div className="ft-summary-icon-circle feed">
+            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>nutrition</span>
+          </div>
+          <div>
+            <div className="ft-summary-label">Total Feed Cost</div>
+            <div className="ft-summary-value">₹{feedSummary.totalFeed.toLocaleString()}</div>
+          </div>
+        </div>
+        <div className="ft-summary-card glass-card">
+          <div className="ft-summary-icon-circle medicine">
+            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>medical_services</span>
+          </div>
+          <div>
+            <div className="ft-summary-label">Total Medicine Cost</div>
+            <div className="ft-summary-value">₹{feedSummary.totalMedicine.toLocaleString()}</div>
+          </div>
+        </div>
+        <div className="ft-summary-card glass-card grand-total">
+          <div className="ft-summary-icon-circle grand">
+            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>account_balance_wallet</span>
+          </div>
+          <div>
+            <div className="ft-summary-label">Grand Total</div>
+            <div className="ft-summary-value">₹{feedSummary.grandTotal.toLocaleString()}</div>
+          </div>
+        </div>
+      </div>
+
       {activeTab === "catalog" && (
-        <div className="feedtracker-panel">
+        <div className="ft-panel">
+          <div className="ft-panel-head">
+            <h3>Feed Items Catalog</h3>
+            <button className="btn-secondary" onClick={openAddItemModal} style={{ padding: "10px 20px", height: "auto" }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18, marginRight: 6 }}>add</span>
+              Add New Item
+            </button>
+          </div>
+
           {feedItems.length === 0 ? (
-            <div className="feedtracker-empty">No feed items yet. Click &quot;+ Add Feed Item&quot; to get started.</div>
+            <div className="ft-empty">No feed items yet. Click &quot;Add New Item&quot; to get started.</div>
           ) : (
-            <div className="table-container">
+            <div className="table-container" style={{ background: "var(--color-surface-container-lowest)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--color-border)" }}>
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Name</th>
+                    <th>Item Name</th>
                     <th>Unit</th>
                     <th>Price/Unit</th>
                     <th>Category</th>
@@ -289,18 +343,29 @@ const FeedTracker = ({ seasonId }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {feedItems.map((item) => (
-                    <tr key={item._id}>
-                      <td>{item.name}</td>
-                      <td>{item.unit}</td>
-                      <td>₹{Number(item.currentPricePerUnit || 0).toLocaleString()}</td>
-                      <td style={{ textTransform: "capitalize" }}>{item.category}</td>
-                      <td>
-                        <button className="btn-edit" onClick={() => openEditItemModal(item)}>Edit</button>
-                        <button className="btn-delete" onClick={() => handleDeleteItem(item)}>Del</button>
-                      </td>
-                    </tr>
-                  ))}
+                  {feedItems.map((item) => {
+                    const badge = categoryBadgeColors[item.category] || categoryBadgeColors.other
+                    return (
+                      <tr key={item._id}>
+                        <td style={{ fontWeight: 600 }}>{item.name}</td>
+                        <td>{item.unit}</td>
+                        <td>₹{Number(item.currentPricePerUnit || 0).toLocaleString()}</td>
+                        <td>
+                          <span className="ft-category-badge" style={{ background: badge.bg, color: badge.text }}>
+                            {item.category}
+                          </span>
+                        </td>
+                        <td>
+                          <button className="ft-icon-btn edit" onClick={() => openEditItemModal(item)} title="Edit">
+                            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>edit</span>
+                          </button>
+                          <button className="ft-icon-btn delete" onClick={() => handleDeleteItem(item)} title="Delete">
+                            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -309,98 +374,123 @@ const FeedTracker = ({ seasonId }) => {
       )}
 
       {activeTab === "usage" && (
-        <div className="feedtracker-panel">
-          <div className="feedtracker-form-row">
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Feed Item</label>
-              <select value={usageForm.feedItemId} onChange={(e) => handleFeedItemSelect(e.target.value)}>
-                <option value="">-- Select --</option>
-                {feedItems.map((fi) => (
-                  <option key={fi._id} value={fi._id}>{fi.name} ({fi.unit})</option>
-                ))}
-              </select>
+        <div className="ft-panel">
+          <div className="ft-form-card">
+            <div className="ft-form-row">
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Feed Item</label>
+                <select value={usageForm.feedItemId} onChange={(e) => handleFeedItemSelect(e.target.value)}>
+                  <option value="">-- Select --</option>
+                  {feedItems.map((fi) => (
+                    <option key={fi._id} value={fi._id}>{fi.name} ({fi.unit})</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Date</label>
+                <input type="date" value={usageForm.date} onChange={(e) => setUsageForm({ ...usageForm, date: e.target.value })} />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Quantity</label>
+                <input type="number" value={usageForm.quantity} onChange={(e) => setUsageForm({ ...usageForm, quantity: e.target.value })} placeholder="Qty" min="0" step="0.01" />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Price/Unit ({selectedFeedItem?.unit || ""})</label>
+                <input type="number" value={usageForm.pricePerUnit} onChange={(e) => setUsageForm({ ...usageForm, pricePerUnit: e.target.value })} placeholder="Auto-filled" min="0" step="0.01" />
+              </div>
             </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Date</label>
-              <input type="date" value={usageForm.date} onChange={(e) => setUsageForm({ ...usageForm, date: e.target.value })} />
+            <div className="form-group">
+              <label>Notes</label>
+              <input type="text" value={usageForm.notes} onChange={(e) => setUsageForm({ ...usageForm, notes: e.target.value })} placeholder="Optional" />
             </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Quantity</label>
-              <input type="number" value={usageForm.quantity} onChange={(e) => setUsageForm({ ...usageForm, quantity: e.target.value })} placeholder="Qty" min="0" step="0.01" />
-            </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Price/Unit ({selectedFeedItem?.unit || ""})</label>
-              <input type="number" value={usageForm.pricePerUnit} onChange={(e) => setUsageForm({ ...usageForm, pricePerUnit: e.target.value })} placeholder="Auto-filled" min="0" step="0.01" />
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <button className="btn-primary" onClick={handleUsageSubmit} disabled={usageSubmitting} style={{ width: "auto", padding: "10px 32px", height: "auto" }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, marginRight: 6 }}>save</span>
+                {usageSubmitting ? "Saving..." : editingUsage ? "Update Entry" : "Record Entry"}
+              </button>
+              {editingUsage && (
+                <button className="btn-cancel" onClick={() => { setEditingUsage(null); setUsageForm({ feedItemId: "", date: new Date().toISOString().split("T")[0], quantity: "", pricePerUnit: "", notes: "" }) }} style={{ padding: "8px 16px" }}>
+                  Cancel Edit
+                </button>
+              )}
             </div>
           </div>
-          <div className="form-group">
-            <label>Notes</label>
-            <input type="text" value={usageForm.notes} onChange={(e) => setUsageForm({ ...usageForm, notes: e.target.value })} placeholder="Optional" />
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <h3 style={{ fontFamily: "var(--font-display)", fontSize: 16, color: "var(--color-text)", margin: 0 }}>Usage History</h3>
+            <span style={{ fontSize: 12, color: "var(--color-text-muted)", fontFamily: "var(--font-body)" }}>
+              Today&apos;s Cost: <strong style={{ color: "var(--color-danger)" }}>₹{todayCost.toLocaleString()}</strong>
+            </span>
           </div>
-          <button className="btn-primary" onClick={handleUsageSubmit} disabled={usageSubmitting} style={{ width: "auto", padding: "10px 32px" }}>
-            {usageSubmitting ? "Saving..." : editingUsage ? "Update Entry" : "Log Usage"}
-          </button>
-          {editingUsage && (
-            <button className="btn-cancel" onClick={() => { setEditingUsage(null); setUsageForm({ feedItemId: "", date: new Date().toISOString().split("T")[0], quantity: "", pricePerUnit: "", notes: "" }) }} style={{ marginLeft: 8, padding: "8px 16px" }}>
-              Cancel Edit
-            </button>
+
+          {sortedUsage.length === 0 ? (
+            <div className="ft-empty">No usage entries logged yet.</div>
+          ) : (
+            <>
+              <div className="table-container" style={{ background: "var(--color-surface-container-lowest)", borderRadius: "var(--radius-lg)", boxShadow: "var(--shadow-sm)", border: "1px solid var(--color-border)" }}>
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Item</th>
+                      <th>Qty</th>
+                      <th>Price/Unit</th>
+                      <th>Cost</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visibleUsage.map((entry) => {
+                      const itemName = entry.feedItemId?.name || entry.itemName || "—"
+                      const cost = (entry.quantity || 0) * (entry.pricePerUnit || 0)
+                      return (
+                        <tr key={entry._id}>
+                          <td>{entry.date ? new Date(entry.date).toISOString().split("T")[0] : "—"}</td>
+                          <td style={{ fontWeight: 500 }}>{itemName}</td>
+                          <td>{entry.quantity}</td>
+                          <td>₹{Number(entry.pricePerUnit || 0).toLocaleString()}</td>
+                          <td className="amount negative">₹{cost.toLocaleString()}</td>
+                          <td>
+                            <button className="ft-icon-btn edit" onClick={() => handleEditUsage(entry)} title="Edit">
+                              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>edit</span>
+                            </button>
+                            <button className="ft-icon-btn delete" onClick={() => handleDeleteUsage(entry)} title="Delete">
+                              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>delete</span>
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {visibleUsageCount < sortedUsage.length && (
+                <div className="ft-load-more">
+                  <button className="btn-secondary" onClick={() => setVisibleUsageCount((prev) => prev + 10)} style={{ padding: "10px 24px", height: "auto" }}>
+                    Load More Records ({sortedUsage.length - visibleUsageCount} remaining)
+                  </button>
+                </div>
+              )}
+            </>
           )}
 
-          <div style={{ marginTop: 32 }}>
-            <h3 style={{ fontFamily: "'Sora', sans-serif", fontSize: 18, marginBottom: 12, color: "var(--color-text)" }}>Usage History</h3>
-            {sortedUsage.length === 0 ? (
-              <div className="feedtracker-empty">No usage entries logged yet.</div>
-            ) : (
-              <>
-                <div className="feedtracker-daily-summary">
-                  <span>
-                    <strong>Today&apos;s Cost:</strong> ₹
-                    {sortedUsage
-                      .filter((u) => u.date && new Date(u.date).toISOString().split("T")[0] === new Date().toISOString().split("T")[0])
-                      .reduce((sum, u) => sum + (u.quantity || 0) * (u.pricePerUnit || 0), 0)
-                      .toLocaleString()}
-                  </span>
-                  <span>
-                    <strong>Total Entries:</strong> {sortedUsage.length}
-                  </span>
-                </div>
-                <div className="table-container">
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Item</th>
-                        <th>Qty</th>
-                        <th>Price/Unit</th>
-                        <th>Cost</th>
-                        <th>Notes</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sortedUsage.map((entry) => {
-                        const itemName = entry.feedItemId?.name || entry.itemName || "—"
-                        const cost = (entry.quantity || 0) * (entry.pricePerUnit || 0)
-                        return (
-                          <tr key={entry._id}>
-                            <td>{entry.date ? new Date(entry.date).toISOString().split("T")[0] : "—"}</td>
-                            <td>{itemName}</td>
-                            <td>{entry.quantity}</td>
-                            <td>₹{Number(entry.pricePerUnit || 0).toLocaleString()}</td>
-                            <td className="amount negative">₹{cost.toLocaleString()}</td>
-                            <td>{entry.notes || "—"}</td>
-                            <td>
-                              <button className="btn-edit" onClick={() => handleEditUsage(entry)}>Edit</button>
-                              <button className="btn-delete" onClick={() => handleDeleteUsage(entry)}>Del</button>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-            )}
+          <div className="ft-bento">
+            <div className="ft-bento-card efficiency">
+              <div className="ft-bento-title">Efficiency Insight</div>
+              <div className="ft-bento-value">₹{Math.round(avgDailyCost).toLocaleString()}</div>
+              <div className="ft-bento-sub">Avg. daily feed expenditure</div>
+            </div>
+            <div className="ft-bento-card stock">
+              <div className="ft-bento-title">Stock Alert</div>
+              <div className="ft-bento-value">{lowStockItems.length}</div>
+              <div className="ft-bento-sub">Items with no usage yet</div>
+            </div>
+            <div className="ft-bento-card delivery">
+              <div className="ft-bento-title" style={{ color: "var(--color-tertiary)" }}>Next Delivery</div>
+              <div className="ft-bento-value" style={{ color: "var(--color-text)" }}>{feedItems.length}</div>
+              <div className="ft-bento-sub" style={{ color: "var(--color-text-muted)" }}>Total items in catalog</div>
+            </div>
           </div>
         </div>
       )}
