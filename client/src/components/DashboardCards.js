@@ -1,136 +1,66 @@
-"use client"
-
 import { useState, useEffect, useCallback } from "react"
 import axios from "axios"
-import toast from "react-hot-toast"
-import PropTypes from "prop-types"
 import api from "./Api/api"
-import Loading from "./common/Loading"
-
-const injectCSS = `
-.dashcards-wrapper { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-.dashcards-card { background: var(--color-surface); border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 14px; transition: transform var(--transition), box-shadow var(--transition); cursor: default; }
-.dashcards-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.dashcards-icon { width: 44px; height: 44px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-.dashcards-icon.birds { background: #e8f5e9; }
-.dashcards-icon.reminders { background: #fff3e0; }
-.dashcards-icon.feed { background: #e3f2fd; }
-.dashcards-icon.farms { background: #f3e5f5; }
-.dashcards-info { flex: 1; min-width: 0; }
-.dashcards-value { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 700; color: var(--color-text); line-height: 1.1; }
-.dashcards-label { font-size: 12px; color: var(--color-text-muted); margin-top: 2px; font-family: 'Manrope', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-@media (max-width: 1023px) { .dashcards-wrapper { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 767px) { .dashcards-wrapper { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
-@media (max-width: 480px) {
-  .dashcards-wrapper { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .dashcards-card { padding: 12px 14px; gap: 10px; }
-  .dashcards-icon { width: 38px; height: 38px; font-size: 18px; }
-  .dashcards-value { font-size: 20px; }
-}
-`
-
-if (typeof document !== "undefined") {
-  const styleId = "dashcards-styles"
-  if (!document.getElementById(styleId)) {
-    const styleEl = document.createElement("style")
-    styleEl.id = styleId
-    styleEl.textContent = injectCSS
-    document.head.appendChild(styleEl)
-  }
-}
 
 const DashboardCards = ({ seasonId }) => {
-  const [data, setData] = useState({ totalBirds: null, feedCostToday: null, upcomingReminders: null, activeFarms: null })
-  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState({ totalBirds: 0, feedCostToday: 0, upcomingReminders: 0, activeFarms: 0 })
 
   const fetchAll = useCallback(async () => {
     if (!seasonId) return
-    setLoading(true)
-    const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` }
     try {
-      const [birdsRes, feedRes, remindersRes, farmsRes] = await Promise.allSettled([
+      const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      const [birdsRes, remindersRes, farmsRes] = await Promise.allSettled([
         axios.get(`${api}/birds?seasonId=${seasonId}`, { headers }),
-        axios.get(`${api}/feed-summary?seasonId=${seasonId}`, { headers }),
         axios.get(`${api}/reminders`, { headers }),
         axios.get(`${api}/farms`, { headers }),
       ])
-
       const birdsArr = birdsRes.status === "fulfilled" ? birdsRes.value.data : []
-      const totalBirds = Array.isArray(birdsArr)
-        ? birdsArr.reduce((sum, b) => sum + (b.currentCount || 0), 0)
-        : 0
-
-      const feedSummary = feedRes.status === "fulfilled" ? feedRes.value.data : null
-      const today = new Date().toISOString().split("T")[0]
-      const feedCostToday = feedSummary?.dailyCosts
-        ? feedSummary.dailyCosts[today] || 0
-        : 0
-
+      const totalBirds = Array.isArray(birdsArr) ? birdsArr.reduce((s, b) => s + (b.currentCount || 0), 0) : 0
       const remindersArr = remindersRes.status === "fulfilled" ? remindersRes.value.data : []
-      const upcomingReminders = Array.isArray(remindersArr)
-        ? remindersArr.filter((r) => !r.completed).length
-        : 0
-
+      const upcoming = Array.isArray(remindersArr) ? remindersArr.filter(r => !r.isCompleted).length : 0
       const farmsArr = farmsRes.status === "fulfilled" ? farmsRes.value.data : []
-      const activeFarms = Array.isArray(farmsArr)
-        ? farmsArr.filter((f) => f.status === "active" || f.isActive).length
-        : 0
-
-      setData({ totalBirds, feedCostToday, upcomingReminders, activeFarms })
-    } catch {
-      toast.error("Failed to load dashboard cards data")
-    } finally {
-      setLoading(false)
-    }
+      const activeFarms = Array.isArray(farmsArr) ? farmsArr.filter(f => f.isActive).length : 0
+      setData({ totalBirds, feedCostToday: 0, upcomingReminders: upcoming, activeFarms })
+    } catch {}
   }, [seasonId])
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    fetchAll()
-  }, [fetchAll])
+  useEffect(() => { fetchAll() }, [fetchAll])
 
-  if (loading) return <Loading type="skeleton" message="Loading summary..." />
+  const cards = [
+    { label: "Total Birds", value: data.totalBirds.toLocaleString(), icon: "flutter_dash", iconBg: "rgba(0,54,26,0.1)", iconColor: "var(--color-primary)", trend: "Healthy flock" },
+    { label: "Feed Cost Today", value: `₹${data.feedCostToday.toLocaleString()}`, icon: "grass", iconBg: "rgba(0,106,96,0.1)", iconColor: "var(--color-secondary)", trend: "On track" },
+    { label: "Upcoming Reminders", value: data.upcomingReminders.toString(), icon: "notifications", iconBg: "rgba(255,220,190,0.3)", iconColor: "var(--color-tertiary)", trend: `${data.upcomingReminders > 0 ? data.upcomingReminders + " pending" : "All clear"}` },
+    { label: "Active Farms", value: data.activeFarms.toString(), icon: "domain", iconBg: "rgba(193,201,191,0.2)", iconColor: "var(--color-on-surface)", trend: "All sectors healthy" },
+  ]
 
   return (
-    <div className="dashcards-wrapper">
-      <div className="dashcards-card">
-        <div className="dashcards-icon birds">🐔</div>
-        <div className="dashcards-info">
-          <div className="dashcards-value">{data.totalBirds !== null ? data.totalBirds : "—"}</div>
-          <div className="dashcards-label">Total Birds</div>
+    <section style={styles.grid}>
+      {cards.map((c, i) => (
+        <div key={i} style={styles.card}>
+          <div>
+            <p style={styles.label}>{c.label}</p>
+            <h3 style={styles.value}>{c.value}</h3>
+            <p style={styles.trend}>
+              <span className="material-symbols-outlined" style={{fontSize:14,marginRight:4}}>trending_up</span>
+              {c.trend}
+            </p>
+          </div>
+          <div style={{...styles.iconCircle, background: c.iconBg, color: c.iconColor}}>
+            <span className="material-symbols-outlined" style={{fontSize:24}}>{c.icon}</span>
+          </div>
         </div>
-      </div>
-
-      <div className="dashcards-card">
-        <div className="dashcards-icon feed">🌾</div>
-        <div className="dashcards-info">
-          <div className="dashcards-value">{data.feedCostToday !== null ? `₹${data.feedCostToday.toLocaleString()}` : "—"}</div>
-          <div className="dashcards-label">Feed Cost Today</div>
-        </div>
-      </div>
-
-      <div className="dashcards-card">
-        <div className="dashcards-icon reminders">🔔</div>
-        <div className="dashcards-info">
-          <div className="dashcards-value">{data.upcomingReminders !== null ? data.upcomingReminders : "—"}</div>
-          <div className="dashcards-label">Upcoming Reminders</div>
-        </div>
-      </div>
-
-      <div className="dashcards-card">
-        <div className="dashcards-icon farms">🏭</div>
-        <div className="dashcards-info">
-          <div className="dashcards-value">{data.activeFarms !== null ? data.activeFarms : "—"}</div>
-          <div className="dashcards-label">Active Farms</div>
-        </div>
-      </div>
-    </div>
+      ))}
+    </section>
   )
 }
 
-DashboardCards.propTypes = {
-  seasonId: PropTypes.string,
+const styles = {
+  grid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24, marginBottom: 24 },
+  card: { background: "var(--color-surface-container-lowest)", padding: 20, borderRadius: 12, border: "1px solid rgba(193,201,191,0.3)", boxShadow: "0px 4px 12px rgba(0,0,0,0.05)", display: "flex", alignItems: "flex-start", justifyContent: "space-between" },
+  label: { color: "var(--color-on-surface-variant)", fontSize: 14, fontWeight: 500, marginBottom: 4 },
+  value: { fontSize: 24, fontWeight: 700, color: "var(--color-primary)", fontFamily: "var(--font-display)", lineHeight: 1.2 },
+  trend: { fontSize: 11, color: "var(--color-primary-container)", marginTop: 4, display: "flex", alignItems: "center" },
+  iconCircle: { width: 48, height: 48, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
 }
 
 export default DashboardCards

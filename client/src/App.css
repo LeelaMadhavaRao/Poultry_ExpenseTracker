@@ -3181,6 +3181,17 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+@media (min-width: 1280px) {
+  .dashboard-main-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+  }
+  .dashboard-main-grid .fin-card { grid-column: span 4; }
+  .dashboard-main-grid .trends-card { grid-column: span 8; }
+  .dashboard-main-grid .transactions-card { grid-column: span 12; }
+}
+
 @media (max-width: 1023px) {
   .features-grid { grid-template-columns: repeat(2, 1fr); }
   .timeline-steps { flex-wrap: wrap; }
