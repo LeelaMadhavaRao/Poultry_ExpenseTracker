@@ -8,7 +8,7 @@ exports.login = async (req, res) => {
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
-    const user = await User.findOne({ username }); // Changed from email to username
+    const user = await User.findOne({ username }).select('+password');
     if (!user || !(await user.comparePassword(password))) {
       console.log('Invalid credentials for username:', username);
       return res.status(401).json({ error: 'Invalid credentials' });
